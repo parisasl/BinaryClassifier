@@ -1,9 +1,6 @@
 
 # Environment Setup & Dataset Loading:
 
-# In[1]:
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
@@ -12,10 +9,6 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # Preparing & Preprocessing the Data:
-
-# In[4]:
-
-
 def load_dataset():
     train_dataset = h5py.File('../train_catvnoncat.h5', "r")
     train_set_x_orig = np.array(train_dataset["train_set_x"][:]) # trainset features
@@ -33,24 +26,13 @@ def load_dataset():
     return train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
 
 
-# In[5]:
-
-
 # Loading the data (cat/non-cat)
 train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_dataset()
-
-
-# In[7]:
-
 
 # Example of a picture
 index = 90
 plt.imshow(train_set_x_orig[index])
 print ("y = " + str(train_set_y[:,index]) + ", it's a '" + classes[np.squeeze(train_set_y[:,index])].decode("utf-8") +  "' picture.")
-
-
-# In[5]:
-
 
 # data shape in test and train sets 
 m_train = train_set_y.shape[1]
@@ -66,10 +48,6 @@ print ("train_set_y shape: " + str(train_set_y.shape))
 print ("test_set_x shape: " + str(test_set_x_orig.shape))
 print ("test_set_y shape: " + str(test_set_y.shape))
 
-
-# In[6]:
-
-
 # Reshape the training and test examples
 train_set_x_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0], -1).T
 test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0], -1).T
@@ -80,21 +58,15 @@ print ("test_set_x_flatten shape: " + str(test_set_x_flatten.shape))
 print ("test_set_y shape: " + str(test_set_y.shape))
 print ("sanity check after reshaping: " + str(train_set_x_flatten[0:5,0]))
 
-
-# In[7]:
-
-
-#standardize the dataset
+# Standardize the dataset
 train_set_x = train_set_x_flatten / 255.
 test_set_x = test_set_x_flatten / 255.
 
 
-# ### Building & Training Model:
-
-# In[8]:
+# Building & Training Model:
 
 
-# sigmoid function
+# Sigmoid function
 
 def sigmoid(z):
     s = 1 / (1 + np.exp(-z))
@@ -102,15 +74,8 @@ def sigmoid(z):
     return s
 
 
-# In[9]:
-
-
 print ("sigmoid(0) = " + str(sigmoid(0)))
 print ("sigmoid(9.2) = " + str(sigmoid(9.2)))
-
-
-# In[10]:
-
 
 # initialize_with_zeros
 
@@ -121,21 +86,13 @@ def initialize_with_zeros(dim):
     
     return w, b
 
-
-# In[11]:
-
-
 dim = 2
 w, b = initialize_with_zeros(dim)
 print ("w = " + str(w))
 print ("b = " + str(b))
 
 
-# In[12]:
-
-
 # Implement the cost function and its gradient for forward propagation
-
 def propagate(w, b, X, Y):
     
     
@@ -155,21 +112,13 @@ def propagate(w, b, X, Y):
     
     return grads, cost
 
-
-# In[13]:
-
-
 w, b, X, Y = np.array([[1], [2]]), 2, np.array([[1,2], [3,4]]), np.array([[1, 0]])
 grads, cost = propagate(w, b, X, Y)
 print ("dw = " + str(grads["dw"]))
 print ("db = " + str(grads["db"]))
 print ("cost = " + str(cost))
 
-
-# In[14]:
-
-
-#update the parameters
+# Update the parameters
 def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
     """
     This function optimizes w and b by running a gradient descent algorithm
@@ -207,20 +156,12 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
     
     return params, grads, costs
 
-
-# In[15]:
-
-
 params, grads, costs = optimize(w, b, X, Y, num_iterations= 100, learning_rate = 0.009, print_cost = False)
 
 print ("w = " + str(params["w"]))
 print ("b = " + str(params["b"]))
 print ("dw = " + str(grads["dw"]))
 print ("db = " + str(grads["db"]))
-
-
-# In[16]:
-
 
 # predict the image is cat or non-cat
 def predict(w, b, X):
@@ -238,15 +179,7 @@ def predict(w, b, X):
     
     return Y_prediction
 
-
-# In[17]:
-
-
 print("predictions = " + str(predict(w, b, X)))
-
-
-# In[18]:
-
 
 def model(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0.5, print_cost=False):
     """
@@ -284,17 +217,9 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0
     
     return d
 
-
-# ### Evaluating Model:
-
-# In[19]:
-
+# Evaluating Model:
 
 d = model(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations = 2000, learning_rate = 0.005, print_cost = True)
-
-
-# In[20]:
-
 
 # Plot learning curve (with costs)
 costs = np.squeeze(d['costs'])
@@ -303,10 +228,6 @@ plt.ylabel('cost')
 plt.xlabel('iterations (per hundreds)')
 plt.title("Learning rate =" + str(d["learning_rate"]))
 plt.show()
-
-
-# In[21]:
-
 
 learning_rates = [0.01, 0.001, 0.0001]
 models = {}
