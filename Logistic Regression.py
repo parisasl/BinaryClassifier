@@ -6,11 +6,6 @@ import matplotlib.pyplot as plt
 import h5py
 from IPython import get_ipython
 
-#get_ipython().run_line_magic('matplotlib', 'inline')
-ipy = get_ipython()
-if ipy is not None:
-    ipy.run_line_magic('matplotlib', 'inline')
-
 # Preparing & Preprocessing the Data:
 def load_dataset():
     train_dataset = h5py.File('/Users/paris/OneDrive/Desktop/Prog_docum/dataset/train_catvnoncat.h5', "r")
