@@ -91,24 +91,41 @@ print ("b = " + str(b))
 
 
 # Implement the cost function and its gradient for forward propagation
+# Implement the cost function and its gradient for forward propagation
+
 def propagate(w, b, X, Y):
-    
+
     
     m = X.shape[1]
     
-    # FORWARD PROPAGATION (FROM X TO COST)
+    # FORWARD PROPAGATION (FROM X TO COST) 
     A = sigmoid(np.dot(w.T, X) + b)  # compute activation
-    cost = (- 1 / m) * np.sum(Y * np.log(A) + (1 - Y) * (np.log(1 - A)))  # compute cost
     
+    ### Adding a small value to log function to compensate
+    # cost = (- 1 / 1) * np.sum(Y * np.log(A+10**(-100)) + (1 - Y) * (np.log(1 - A+10**(-100))))  # compute cost
+    
+    cost = (-1/m) * np.sum(Y * np.log(A) + (1 - Y) * (np.log(1 - A)))  # compute cost 
+    
+    ### removing (1/m)
+    # cost = (- 1 / 1) * np.sum(Y * np.log(A) + (1 - Y) * (np.log(1 - A)))
+    
+    ### printing each part of the cost variable
+    # temp1 = (-1) * Y * np.log(A)
+    # temp2 = (-1) * (1 - Y) * (np.log(1 - A))
     
     # BACKWARD PROPAGATION (TO FIND GRAD)
-    dw = (1 / m) * np.dot(X, (A - Y).T)
-    db = (1 / m) * np.sum(A - Y)
+    dw =  (1/m) * (np.dot(X, (A - Y).T))# after doing derivation this final equation is dJ/dW
+    db =  (1/m) * (np.sum(A - Y))
+    
+    ### removing the (1/m) 
+    #dw =  (np.dot(X, (A - Y).T))# after doing derivation this final equation is dJ/dW
+    #db =  (np.sum(A - Y))
     
     grads = {"dw": dw,
              "db": db}
-    
-    return grads, cost
+    # return grads, cost, temp1, temp2
+    return grads, cost 
+
 
 w, b, X, Y = np.array([[1], [2]]), 2, np.array([[1,2], [3,4]]), np.array([[1, 0]])
 grads, cost = propagate(w, b, X, Y)
@@ -125,9 +142,10 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
     costs = []
     
     for i in range(num_iterations):
-        
+    
         
         # Cost and gradient calculation
+        # grads, cost,temp1, temp2 = propagate(w, b, X, Y)
         grads, cost = propagate(w, b, X, Y)
         
         # Retrieve derivatives from grads
@@ -139,13 +157,13 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
         b = b - learning_rate * db
         
         # Record the costs
-        if i % 100 == 0:
-            costs.append(cost)
+        costs.append(cost)
         
-        # Print the cost every 100 training examples
-        if print_cost and i % 100 == 0:
+        # Print the cost of training examples
+        if print_cost:
             print ("Cost after iteration %i: %f" % (i, cost))
-    
+        # print("part1" + str(temp1))
+        # print("part2" + str(temp2))
     params = {"w": w,
               "b": b}
     
@@ -194,7 +212,8 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0
     # Retrieve parameters w and b
     w = parameters["w"]
     b = parameters["b"]
-    
+   
+
     # Predict test/train set examples
     Y_prediction_test = predict(w, b, X_test)
     Y_prediction_train = predict(w, b, X_train)
@@ -227,7 +246,7 @@ plt.xlabel('iterations (per hundreds)')
 plt.title("Learning rate =" + str(d["learning_rate"]))
 plt.show()
 
-learning_rates = [0.01, 0.001, 0.0001]
+learning_rates = [0.01, 0.001, 0.00004]  #1/209*0.01 == 0.00004 (in case of removing 1/m)
 models = {}
 for i in learning_rates:
     print ("learning rate is: " + str(i))
